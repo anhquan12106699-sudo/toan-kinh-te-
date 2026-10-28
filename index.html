@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Đăng bài — Ngành Toán Kinh Tế</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&family=Roboto+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --green-deep:#015B34;
+    --green-darkest:#013D26;
+    --green-bright:#2FAF60;
+    --gold:#F2B705;
+    --cream:#FBF6F0;
+    --ink:#101A15;
+    --muted:#6B7770;
+    --beige:#E4DED4;
+    --danger:#c0392b;
+    --font-body:'Roboto', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+    --font-cond:'Roboto Condensed', 'Arial Narrow', system-ui, Arial, sans-serif;
+    --radius:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--font-body);background:var(--cream);color:var(--ink);line-height:1.6;padding:32px 16px 80px;}
+  .wrap{max-width:680px;margin:0 auto;}
+  .brand{font-family:var(--font-cond);text-transform:uppercase;letter-spacing:.14em;font-size:.9rem;font-weight:700;color:var(--green-bright);margin-bottom:6px;}
+  h1{font-size:1.6rem;font-weight:900;color:var(--green-darkest);margin-bottom:6px;}
+  .sub{color:var(--muted);font-size:.95rem;margin-bottom:20px;}
+  form{background:#fff;border:1px solid var(--beige);border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;gap:18px;box-shadow:0 10px 30px rgba(1,61,38,.06);}
+  label{font-weight:700;font-size:.92rem;color:var(--green-darkest);display:block;margin-bottom:6px;}
+  .req{color:var(--danger);font-weight:400;}
+  select, input[type=text], input[type=url], textarea{
+    width:100%;border:1px solid var(--beige);border-radius:10px;padding:11px 13px;
+    font-family:inherit;font-size:.98rem;color:var(--ink);background:var(--cream);
+  }
+  select:focus, input:focus, textarea:focus, button:focus-visible, .file-drop:focus-visible{outline:2px solid var(--green-bright);outline-offset:2px;border-color:var(--green-bright);}
+  textarea{min-height:140px;resize:vertical;}
+  .row-between{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
+  .counter{font-size:.78rem;color:var(--muted);}
+  .file-drop{
+    border:1.5px dashed var(--beige);border-radius:10px;padding:18px 16px;text-align:center;
+    color:var(--muted);font-size:.9rem;cursor:pointer;background:var(--cream);font-weight:400;margin-bottom:0;
+    transition:border-color .15s, background .15s;
+  }
+  .file-drop:hover{border-color:var(--green-bright);}
+  .file-drop.has-file{border-color:var(--green-bright);color:var(--green-darkest);}
+  .file-drop.drag{border-color:var(--green-deep);background:#e6f6ec;color:var(--green-darkest);}
+  input[type=file]{display:none;}
+  #imgWrap{display:none;margin-top:10px;position:relative;}
+  #imgPreview{max-height:220px;border-radius:10px;width:100%;object-fit:cover;display:block;}
+  #imgWrap .img-meta{font-size:.8rem;color:var(--muted);margin-top:4px;}
+  .chip-btn{
+    margin:0;padding:6px 10px;font-size:.8rem;background:transparent;color:var(--danger);
+    border:1px solid #f5b7b1;border-radius:8px;cursor:pointer;font-weight:600;
+  }
+  .chip-btn:hover{background:#fdecea;}
+  .chip-btn.neutral{color:var(--green-deep);border-color:var(--beige);background:var(--cream);}
+  .chip-btn.neutral:hover{border-color:var(--green-bright);background:#fff;}
+  .chip-btn:disabled{opacity:.4;cursor:not-allowed;background:transparent;}
+  /* PDF */
+  .pdf-toolbar{display:none;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .pdf-toolbar.show{display:flex;}
+  .pdf-summary{font-size:.85rem;color:var(--green-darkest);font-weight:600;}
+  .pdf-tools{display:flex;gap:8px;flex-wrap:wrap;}
+  .pdf-list{display:flex;flex-direction:column;gap:8px;margin-top:10px;max-height:460px;overflow:auto;padding-right:2px;}
+  .pdf-info{display:flex;padding:8px 10px;border-radius:10px;background:#eef7f1;border:1px solid var(--green-bright);color:var(--green-darkest);font-size:.9rem;align-items:center;gap:10px;}
+  .pdf-info.st-error{background:#fdecea;border-color:#f5b7b1;}
+  .pdf-info.st-done{background:#f4f4f4;border-color:var(--beige);opacity:.85;}
+  .pdf-info.st-uploading{border-color:var(--gold);background:#fff8e1;}
+  .pdf-info .pdf-icon{flex-shrink:0;width:34px;height:34px;border-radius:8px;background:var(--green-deep);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.7rem;}
+  .pdf-info .pdf-meta{flex:1;min-width:0;}
+  .pdf-info .pdf-name{width:100%;border:1px solid transparent;background:transparent;padding:3px 6px;border-radius:6px;font-size:.9rem;font-weight:700;color:var(--green-darkest);}
+  .pdf-info .pdf-name:hover{border-color:var(--beige);background:#fff;}
+  .pdf-info .pdf-name:disabled{color:var(--muted);}
+  .pdf-info .pdf-sub{font-size:.78rem;color:var(--muted);padding:0 6px;}
+  .pdf-info .pdf-sub .err{color:var(--danger);}
+  .pdf-info .pdf-btns{display:flex;gap:4px;flex-shrink:0;}
+  .pdf-info .pdf-btns .chip-btn{padding:6px 8px;}
+  /* tiến trình */
+  .progress{display:none;border:1px solid var(--beige);border-radius:10px;padding:12px 14px;background:var(--cream);}
+  .progress.show{display:block;}
+  .bar{height:10px;border-radius:99px;background:var(--beige);overflow:hidden;margin:8px 0;}
+  .bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green-deep),var(--green-bright));transition:width .25s;}
+  .progress .p-text{font-size:.88rem;color:var(--green-darkest);}
+  .progress .p-actions{display:flex;gap:8px;margin-top:6px;}
+  .word-info{display:none;margin-top:8px;padding:10px 12px;border-radius:10px;background:#eef7f1;border:1px solid var(--green-bright);color:var(--green-darkest);font-size:.9rem;align-items:center;gap:10px;}
+  .word-info.show{display:flex;}
+  .word-info .word-icon{flex-shrink:0;width:36px;height:36px;border-radius:8px;background:#2b579a;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.65rem;}
+  .word-info .word-meta{flex:1;min-width:0;}
+  .word-info .word-meta strong{display:block;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .word-info .word-meta span{font-size:.8rem;color:var(--muted);}
+  button.main{
+    margin-top:6px;background:var(--green-deep);color:#fff;border:none;border-radius:10px;padding:14px;
+    font-size:1rem;font-weight:700;cursor:pointer;transition:background .2s;font-family:inherit;
+  }
+  button.main:hover{background:var(--green-darkest);}
+  button.main:disabled{background:var(--muted);cursor:not-allowed;}
+  .msg{border-radius:10px;padding:12px 14px;font-size:.92rem;display:none;white-space:pre-line;}
+  .msg.ok{display:block;background:#e6f6ec;color:var(--green-darkest);border:1px solid var(--green-bright);}
+  .msg.err{display:block;background:#fdecea;color:var(--danger);border:1px solid #f5b7b1;}
+  .msg.warn{display:block;background:#fff8e1;color:#7a5b00;border:1px solid var(--gold);}
+  .hint{font-size:.82rem;color:var(--muted);margin-top:6px;}
+  .hint a{color:var(--green-deep);}
+  .draft-note{display:none;font-size:.82rem;background:#fff8e1;border:1px solid var(--gold);color:#7a5b00;border-radius:10px;padding:8px 12px;margin-bottom:14px;}
+  .draft-note.show{display:flex;justify-content:space-between;gap:10px;align-items:center;}
+  .draft-note button{background:none;border:none;color:var(--green-deep);font-weight:700;cursor:pointer;text-decoration:underline;font-size:.82rem;font-family:inherit;}
+  [hidden]{display:none !important;}
+  .lib-panel{border:1px solid var(--beige,#E4DED4);border-radius:14px;padding:14px 16px;background:#fbfaf6;display:flex;flex-direction:column;gap:12px;}
+  .lib-panel h3{margin:0;font-size:.98rem;color:var(--green-darkest,#013D26);}
+  .lib-panel textarea{min-height:70px;}
+  .pdf-sec{font-size:.78rem;padding:4px 6px;border-radius:8px;border:1px solid var(--beige,#E4DED4);background:#fff;max-width:100%;margin-top:4px;}
+  details.setup{font-size:.85rem;color:var(--muted);}
+  details.setup summary{cursor:pointer;}
+  details.setup pre{background:#101A15;color:#dff5e7;padding:12px;border-radius:10px;overflow:auto;font-size:.76rem;margin-top:8px;line-height:1.45;}
+  details.setup button{margin-top:8px;}
+  .kbd{font-size:.75rem;color:var(--muted);text-align:center;}
+
+  /* ===== Bố cục 2 cột: form + xem trước ===== */
+  body{padding:28px 20px 80px;}
+  .layout{--formw:680px;--pvz:1;max-width:1900px;margin:0 auto;display:grid;grid-template-columns:var(--formw) 14px minmax(0,1fr);gap:0;align-items:start;}
+  .layout .wrap{padding-right:0;}
+  .splitter{position:sticky;top:16px;height:calc(100vh - 32px);min-height:260px;cursor:col-resize;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;}
+  .splitter::before{content:"";width:4px;height:64px;border-radius:99px;background:var(--beige);transition:background .15s, height .15s;}
+  .splitter:hover::before,.splitter:focus-visible::before,.splitter.drag::before{background:var(--green-bright);height:110px;}
+  .splitter:focus-visible{outline:none;}
+  body.resizing{cursor:col-resize;user-select:none;}
+  body.resizing iframe, body.resizing .preview{pointer-events:none;}
+  .pv-zoom{display:flex;align-items:center;gap:4px;margin-left:auto;}
+  .pv-zoom button{margin:0;border:1px solid var(--beige);background:var(--cream);color:var(--green-deep);border-radius:8px;min-width:30px;height:30px;font-weight:800;cursor:pointer;font-family:inherit;padding:0 8px;}
+  .pv-zoom button:hover{border-color:var(--green-bright);}
+  .pv-zoom .z-val{min-width:46px;text-align:center;font-size:.8rem;font-weight:700;color:var(--green-darkest);}
+  .pv-top{display:flex;align-items:flex-start;gap:10px;}
+  .pv-stage{zoom:var(--pvz);}
+  .wrap{max-width:none;margin:0;}
+  .preview{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto;background:#fff;border:1px solid var(--beige);border-radius:var(--radius);box-shadow:0 10px 30px rgba(1,61,38,.06);padding:18px;}
+  .pv-head{display:flex;flex-direction:column;gap:2px;margin-bottom:12px;}
+  .pv-head strong{font-size:1.05rem;color:var(--green-darkest);font-weight:900;}
+  .pv-where{font-size:.82rem;color:var(--muted);}
+  .pv-where b{color:var(--green-deep);}
+  .pv-tabs{display:flex;gap:6px;background:rgba(1,61,38,.06);padding:4px;border-radius:999px;width:fit-content;margin-bottom:14px;}
+  .pv-tabs button{margin:0;border:none;background:transparent;color:var(--green-darkest);font-family:var(--font-cond);font-weight:700;font-size:.88rem;padding:8px 16px;border-radius:999px;cursor:pointer;}
+  .pv-tabs button.on{background:var(--green-deep);color:#fff;}
+  .pv-stage{background:var(--cream);border:1px dashed var(--beige);border-radius:12px;padding:16px;min-height:160px;}
+  .pv-check{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;}
+  .pv-chip{margin:0;border:1px solid var(--beige);background:#fff;color:var(--muted);border-radius:999px;font-size:.78rem;font-weight:700;padding:5px 11px;cursor:pointer;font-family:inherit;}
+  .pv-chip.ok{background:#e6f6ec;border-color:var(--green-bright);color:var(--green-darkest);}
+  .pv-chip.miss{background:#fff8e1;border-color:var(--gold);color:#7a5b00;}
+  .pv-ready{font-size:.86rem;margin-top:10px;font-weight:700;}
+  .pv-ready.ok{color:var(--green-deep);} .pv-ready.miss{color:#7a5b00;}
+  .pv-note{font-size:.76rem;color:var(--muted);margin-top:8px;}
+  .pv-ph{color:#a2aaa5;font-style:italic;font-weight:400;}
+  [data-field]{cursor:pointer;border-radius:6px;transition:outline-color .15s, background .15s;outline:2px solid transparent;outline-offset:2px;}
+  [data-field]:hover{outline-color:rgba(47,175,96,.45);}
+  [data-field].hl{outline-color:var(--green-bright);background:rgba(47,175,96,.08);}
+  .flash{animation:flash 1.1s ease;}
+  @keyframes flash{0%,60%{box-shadow:0 0 0 4px rgba(242,183,5,.55);}100%{box-shadow:0 0 0 4px rgba(242,183,5,0);}}
+  .pv-fab{display:none;position:fixed;right:16px;bottom:16px;z-index:50;margin:0;background:var(--green-deep);color:#fff;border:none;border-radius:999px;padding:12px 18px;font-weight:700;box-shadow:0 10px 24px rgba(1,61,38,.35);cursor:pointer;font-family:inherit;}
+  @media (max-width:1100px){
+    .layout{grid-template-columns:minmax(0,1fr);max-width:720px;}
+    .splitter{display:none;}
+    .preview{position:static;max-height:none;}
+    .pv-fab{display:block;}
+  }
+  /* --- mô phỏng giao diện website --- */
+  .pv .notice-card{display:grid;grid-template-columns:72px 1fr auto;gap:14px;align-items:center;background:#fff;border:1px solid rgba(1,61,38,.08);border-radius:14px;padding:18px 20px;min-height:124px;overflow:hidden;}
+  .pv .notice-date{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(145deg,var(--green-deep),var(--green-darkest));color:var(--cream);border-radius:12px;padding:10px 6px;min-height:72px;}
+  .pv .notice-date .day{font-size:1.55rem;font-weight:800;line-height:1;font-family:var(--font-cond);}
+  .pv .notice-date .mon{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;opacity:.85;margin-top:4px;text-align:center;}
+  .pv .notice-body{min-width:0;overflow:hidden;}
+  .pv .notice-body h3{font-size:1.05rem;font-weight:700;color:var(--green-darkest);margin-bottom:6px;line-height:1.35;word-break:break-word;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;}
+  .pv .notice-body p{font-size:.92rem;color:var(--muted);margin:0;word-break:break-word;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;}
+  .pv .notice-tag{font-family:var(--font-cond);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:6px 12px;border-radius:999px;background:rgba(47,175,96,.12);color:var(--green-deep);white-space:nowrap;}
+  .pv-stage{container-type:inline-size;}
+  @container (max-width:380px){
+    .pv .notice-card{grid-template-columns:72px 1fr;}
+    .pv .notice-tag{grid-column:2;justify-self:start;}
+  }
+  .pv .news-card{background:#fff;border:1px solid rgba(1,61,38,.08);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;max-width:360px;margin:0 auto;}
+  .pv .news-card-thumb{aspect-ratio:16/10;background:linear-gradient(135deg,rgba(1,91,52,.85),rgba(1,61,38,.92)),radial-gradient(circle at 30% 30%,rgba(242,183,5,.35),transparent 55%);background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:16px;}
+  .pv .news-card-thumb .badge{font-family:var(--font-cond);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--gold);color:var(--green-darkest);padding:5px 10px;border-radius:999px;}
+  .pv .news-card-body{padding:18px 18px 20px;}
+  .pv .news-card-meta{font-family:var(--font-cond);font-size:.78rem;color:#555;margin-bottom:8px;display:flex;gap:10px;align-items:center;}
+  .pv .news-card-meta .dot,.pv .lib-card-meta .dot{width:4px;height:4px;border-radius:50%;background:var(--green-bright);}
+  /* Trên website, tiêu đề cắt ở 2 dòng và tóm tắt cắt ở 3 dòng — xem trước cũng cắt giống vậy */
+  .pv .news-card-body h3{font-size:1.05rem;font-weight:700;color:var(--green-darkest);line-height:1.35;margin-bottom:10px;word-break:break-word;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;min-height:calc(1.35em * 2);}
+  .pv .news-card-body p{font-size:.9rem;color:#1a1a1a;line-height:1.55;word-break:break-word;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;min-height:calc(1.55em * 3);}
+  /* Băng "Tin mới nhất" ở trang chủ */
+  .pv .hn-marquee-card{width:300px;max-width:100%;margin:0 auto;background:#fff;border:1px solid var(--beige);border-radius:16px;overflow:hidden;box-shadow:0 10px 28px -18px rgba(1,61,38,.22);display:flex;flex-direction:column;}
+  .pv .hn-marquee-thumb{height:140px;background:linear-gradient(135deg,#0a5c3a 0%,#0e7a4d 50%,#c9a227 100%);background-size:cover;background-position:center;position:relative;}
+  .pv .hn-marquee-thumb .badge{position:absolute;top:10px;left:10px;background:var(--gold);color:var(--green-darkest);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:999px;}
+  .pv .hn-marquee-body{padding:14px 16px 18px;display:flex;flex-direction:column;}
+  .pv .hn-marquee-meta{font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+  .pv .hn-marquee-meta .dot{width:3px;height:3px;border-radius:50%;background:var(--muted);}
+  .pv .hn-marquee-body h4{font-size:.98rem;font-weight:800;color:var(--green-darkest);line-height:1.35;margin:0 0 8px;word-break:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .pv .hn-marquee-body p{font-size:.86rem;color:#333;line-height:1.5;margin:0;word-break:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .pv .lib-card{background:#fff;border:1px solid var(--beige);border-radius:16px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:10px;max-width:360px;margin:0 auto;box-shadow:0 10px 28px -18px rgba(1,61,38,.18);}
+  .pv .lib-card-top{display:flex;align-items:center;gap:12px;}
+  .pv .lib-card-icon{width:44px;height:44px;border-radius:12px;background:var(--green-deep);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.72rem;}
+  .pv .lib-badge{font-size:.75rem;font-weight:700;background:var(--gold);color:var(--green-darkest);padding:3px 10px;border-radius:999px;}
+  .pv .lib-card h3{font-size:1.02rem;font-weight:800;color:var(--green-darkest);line-height:1.35;word-break:break-word;}
+  .pv .lib-card p{font-size:.9rem;color:#333;line-height:1.5;word-break:break-word;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+  .pv .lib-card-meta{font-size:.8rem;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .pv-art{border-radius:12px;overflow:hidden;background:var(--cream);border:1px solid var(--beige);}
+  .pv-art .ap-hero{background:linear-gradient(135deg,#015B34 0%,#013D26 55%,#012a1c 100%);padding:22px 22px 26px;}
+  .pv-art .ap-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--font-cond);font-weight:700;font-size:.85rem;color:rgba(251,246,240,.9);margin-bottom:14px;}
+  .pv-art .ap-nav .sep{color:var(--gold);font-size:.62rem;}
+  .pv-art .ap-nav .gold{color:var(--gold);}
+  .pv-art .ap-title{font-size:1.5rem;font-weight:900;color:#FBF6F0;line-height:1.3;margin:0;word-break:break-word;}
+  .pv-art .ap-title::after{content:"";display:block;width:72px;height:4px;background:var(--gold);margin-top:16px;border-radius:2px;}
+  .pv-art .ap-title .pv-ph{color:rgba(251,246,240,.55);}
+  .pv-art .ap-main{padding:22px;}
+  .pv-art .a-summary{margin:0 0 14px;font-size:1.1rem;line-height:1.7;font-weight:500;color:var(--green-darkest);text-align:justify;white-space:pre-line;word-break:break-word;}
+  .pv-art .a-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.85rem;color:var(--muted);margin:0 0 18px;}
+  .pv-art .a-meta .ap-date::before{content:"🕒 ";}
+  .pv-art .a-meta .badge{background:var(--gold);color:var(--green-darkest);font-weight:700;font-size:.78rem;padding:3px 10px;border-radius:999px;}
+  .pv-art .a-meta .dot{width:4px;height:4px;border-radius:50%;background:var(--muted);}
+  .pv-art .a-body{background:transparent;border:0;border-radius:0;padding:0;font-size:1rem;line-height:1.8;color:var(--ink);max-height:420px;overflow:auto;word-break:break-word;}
+  .pv-art .a-body p,.pv-art .a-body li{text-align:justify;}
+  .pv-art .a-body.plain{white-space:pre-wrap;}
+  .pv-art .a-body img{max-width:100%;height:auto;display:block;margin:0 auto;border-radius:8px;}
+  .pv-art .a-body table{border-collapse:collapse;max-width:100%;} .pv-art .a-body td,.pv-art .a-body th{border:1px solid var(--beige);padding:4px 8px;}
+  .pv-art .a-file{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;background:#eef7f1;border:1px solid var(--green-bright);font-size:.88rem;margin-bottom:10px;}
+  .pv-art .a-pdfs{margin-top:14px;}
+  .pv-art .a-pdfs h4{font-size:.95rem;color:var(--green-darkest);margin-bottom:8px;}
+  .pv-art .a-pdf{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--beige);border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:.88rem;}
+  .pv-art .a-pdf .ic{width:30px;height:30px;border-radius:8px;background:var(--green-deep);color:#fff;font-weight:800;font-size:.62rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .pv-art .a-pdf .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;}
+  .pv-art .a-pdf .bt{font-size:.72rem;font-weight:700;color:var(--green-deep);border:1px solid var(--green-bright);border-radius:999px;padding:3px 10px;}
+</style>
+</head>
+<body>
+<div class="layout">
+<div class="wrap">
+  <div class="brand">Ngành Toán Kinh Tế · HVTC</div>
+  <h1>Viết &amp; đăng bài</h1>
+  <p class="sub">Điền nội dung, chọn mục, gắn ảnh và tài liệu (nếu có) rồi bấm Đăng bài — bài lên trang chủ ngay.</p>
+
+  <div class="draft-note" id="draftNote" role="status">
+    <span>Đã khôi phục bản nháp lần trước (chỉ gồm chữ, không gồm file đính kèm).</span>
+    <button type="button" id="clearDraft">Xóa nháp</button>
+  </div>
+
+  <style>
+.edit-bar{background:#fff;border:1px dashed var(--green-bright);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;display:flex;flex-direction:column;gap:10px;font-size:.92rem}
+.edit-bar .ed-line{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.edit-bar select,.edit-bar input{flex:1;min-width:160px}
+.edit-bar .ed-state{background:#e6f6ec;border-radius:10px;padding:10px 12px;color:var(--green-darkest)}
+.ed-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--beige)}
+.ed-row span{flex:1}.ed-row.gone span{text-decoration:line-through;color:var(--muted)}
+</style>
+<div class="edit-bar" id="editBar">
+  <div class="ed-line"><button type="button" class="chip-btn neutral" id="editOpen">✏️ Sửa bài đã đăng</button><span class="hint" style="margin:0">Mở lại bài đã đăng để sửa lỗi, không cần đăng lại.</span></div>
+  <div class="ed-line" id="editPick" hidden>
+    <select id="editSel" aria-label="Chọn bài cần sửa"></select>
+    <button type="button" class="chip-btn" id="editLoad">Mở bài</button>
+  </div>
+  <div class="ed-state" id="editState" hidden>
+    <div class="ed-line"><span>Đang SỬA bài: <b id="editTitle"></b></span><button type="button" class="chip-btn" id="editCancel">Thoát, không sửa nữa</button></div>
+    <div id="editFiles"></div>
+    <div class="ed-line" style="margin-top:8px"><button type="button" class="chip-btn neutral" id="editToText" hidden>📝 Chuyển nội dung Word cũ sang ô gõ tay để sửa trực tiếp</button></div>
+    <p class="hint" style="margin:6px 0 0">Nội dung Word cũ hiện ở khung xem trước bên phải (tab <b>Trang bài viết</b>). Muốn sửa: chọn file Word mới để thay, hoặc dùng nút 📝 ở trên để sửa bằng chữ ngay trên trang. Sửa xong bấm <b>Lưu chỉnh sửa</b> ở cuối form.</p>
+  </div>
+</div>
+<form id="postForm" novalidate>
+    <div>
+      <label for="category">Mục đăng <span class="req">*</span></label>
+      <select id="category" required>
+        <option value="Thông báo">Thông báo</option>
+        <option value="Tin ngành Toán kinh tế">Tin ngành Toán kinh tế</option>
+        <option value="Hội thảo - Tọa đàm">Hội thảo - Tọa đàm</option>
+        <option value="Thư viện">Thư viện (tài liệu PDF)</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="title">Tiêu đề bài viết <span class="req">*</span></label>
+      <input type="text" id="title" required maxlength="200" placeholder="Ví dụ: Thông báo lịch thi học kỳ I">
+    </div>
+
+    <div>
+      <label for="badge">Nhãn hiển thị (badge)</label>
+      <input type="text" id="badge" maxlength="40" placeholder="Ví dụ: Quan trọng, Sự kiện, Học bổng...">
+    </div>
+
+    <div>
+      <div class="row-between"><label for="content">Tóm tắt <span class="req">*</span></label><span class="counter" id="contentCount">0/400</span></div>
+      <textarea id="content" required maxlength="400" placeholder="Vài câu tóm tắt, sẽ hiển thị ở thẻ bài viết trên trang chủ..." style="min-height:90px;"></textarea>
+      <p class="hint">Đoạn ngắn hiện trên thẻ tin / thẻ tài liệu Thư viện.</p>
+    </div>
+
+    <div id="libPanel" class="lib-panel" hidden>
+      <h3>Bài Thư viện gồm 2 mục — mỗi mục có thể có ghi chú chữ và/hoặc file PDF</h3>
+      <div>
+        <label for="note_slide">1. Slide bài giảng — ghi chú (tuỳ chọn)</label>
+        <textarea id="note_slide" placeholder="Ví dụ: Slide các chương, cập nhật 08/2026..."></textarea>
+      </div>
+      <div>
+        <label for="note_noidung">2. Tài liệu ôn tập — ghi chú (tuỳ chọn)</label>
+        <textarea id="note_noidung" placeholder="Ví dụ: Đề cương ôn tập, bộ câu hỏi, tài liệu đọc thêm..."></textarea>
+      </div>
+      <p class="hint" style="margin:0;">Dưới đây, khi chọn file PDF, bạn chọn file đó thuộc mục nào. Có thể đổi mục từng file sau khi thêm.</p>
+    </div>
+
+    <div id="wordBlock">
+      <label for="wordInput">Tệp Word nội dung chi tiết (.doc / .docx)</label>
+      <label class="file-drop" id="wordDrop" for="wordInput" tabindex="0">Bấm để chọn hoặc kéo thả file Word vào đây</label>
+      <input type="file" id="wordInput" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+      <div class="word-info" id="wordInfo">
+        <div class="word-icon">W</div>
+        <div class="word-meta"><strong id="wordNameLabel">—</strong><span id="wordSizeLabel"></span></div>
+        <button type="button" class="chip-btn" id="clearWord">Xóa</button>
+      </div>
+      <p class="hint">Viết bài trong Microsoft Word (định dạng, ảnh, bảng…), lưu <b>.docx</b> rồi tải lên. Trang web hiển thị nội dung để đọc online và cho tải lại file Word. Mỗi file tối đa <span class="max-word-mb"></span> MB.</p>
+    </div>
+
+    <details id="detailBlock" style="margin-top:-8px;">
+      <summary style="cursor:pointer;color:var(--muted);font-size:.85rem;">Hoặc dán nội dung trực tiếp / dán link Google Doc (tuỳ chọn)</summary>
+      <textarea id="detail" placeholder="Nội dung đầy đủ gõ tay (nếu không dùng file Word)..." style="margin-top:10px;"></textarea>
+      <input type="url" id="docUrl" placeholder="Hoặc link Google Doc (tuỳ chọn)..." style="margin-top:10px;">
+      <p class="hint">Chỉ cần một trong ba: file Word, nội dung gõ tay, hoặc link Google Doc.</p>
+    </details>
+
+    <div id="imageBlock">
+      <label for="imageInput">Ảnh minh họa (không bắt buộc)</label>
+      <label class="file-drop" id="fileDrop" for="imageInput" tabindex="0">Bấm để chọn hoặc kéo thả ảnh vào đây</label>
+      <input type="file" id="imageInput" accept="image/*">
+      <div id="imgWrap">
+        <img id="imgPreview" alt="Xem trước ảnh">
+        <div class="row-between"><span class="img-meta" id="imgMeta"></span><button type="button" class="chip-btn" id="clearImg">Bỏ ảnh</button></div>
+      </div>
+    </div>
+
+    <div>
+      <label for="pdfInput">File PDF đính kèm <span style="font-weight:400;color:var(--muted);">(không giới hạn số lượng)</span></label>
+      <div id="pdfSecWrap" hidden style="margin:6px 0;">
+        <label for="pdfSection" style="font-size:.9rem;">Các file PDF chọn tiếp theo sẽ thêm vào mục:</label>
+        <select id="pdfSection">
+          <option value="slide">Slide bài giảng</option>
+          <option value="noidung">Tài liệu ôn tập</option>
+        </select>
+      </div>
+      <label class="file-drop" id="pdfDrop" for="pdfInput" tabindex="0">Bấm để chọn hoặc kéo thả nhiều file PDF vào đây</label>
+      <input type="file" id="pdfInput" accept="application/pdf,.pdf" multiple>
+      <div class="pdf-toolbar" id="pdfToolbar">
+        <span class="pdf-summary" id="pdfSummary"></span>
+        <div class="pdf-tools">
+          <button type="button" class="chip-btn neutral" id="sortPdf" title="Sắp xếp theo tên, chương 2 đứng trước chương 10">Sắp xếp A→Z</button>
+          <button type="button" class="chip-btn" id="clearAllPdf">Xóa tất cả</button>
+        </div>
+      </div>
+      <div class="pdf-list" id="pdfList"></div>
+      <p class="hint">Chọn cùng lúc bao nhiêu file cũng được — trang tải lên theo từng lô nhỏ nên không bị nghẽn. Có thể đổi tên hiển thị, đổi thứ tự bằng nút ↑ ↓. Mỗi file tối đa <span class="max-pdf-mb"></span> MB.</p>
+    </div>
+
+    <div class="progress" id="progress" aria-live="polite">
+      <div class="p-text" id="pText">Đang chuẩn bị…</div>
+      <div class="bar"><i id="pBar"></i></div>
+      <div class="p-actions"><button type="button" class="chip-btn" id="cancelUpload">Dừng sau lô hiện tại</button></div>
+    </div>
+
+    <div id="msg" class="msg" role="status" aria-live="polite"></div>
+
+    <button type="submit" class="main" id="submitBtn">Đăng bài</button>
+    <div class="kbd">Phím tắt: Ctrl + Enter để đăng</div>
+
+    <details class="setup">
+      <summary>Cài đặt Supabase: chạy SQL một lần (bắt buộc cho bảng posts; file Word/PDF/ảnh nay lưu ở Cloudflare R2)</summary>
+      <p class="hint">Khi PDF nhiều, trang chia thành các lô. Mặc định trang đọc rồi ghi lại cả danh sách PDF của bài sau mỗi lô. Nếu chạy đoạn SQL dưới đây một lần trong Supabase → SQL Editor, trang chỉ gửi phần mới, nhanh hơn nhiều. Nếu bảng chặn việc sửa bài, đây cũng là cách cho phép thêm PDF mà không phải mở quyền sửa toàn bộ.</p>
+      <pre id="sqlBox">create or replace function append_pdfs(p_id text, p_items jsonb)
+returns void language sql security definer as $$
+  update posts
+  set pdfs = coalesce(pdfs, '[]'::jsonb) || coalesce((
+    select jsonb_agg(e) from jsonb_array_elements(p_items) e
+    where not exists (
+      select 1 from jsonb_array_elements(coalesce(posts.pdfs, '[]'::jsonb)) x
+      where x->>'uid' = e->>'uid')
+  ), '[]'::jsonb)
+  where id::text = p_id;
+$$;
+grant execute on function append_pdfs(text, jsonb) to anon;
+
+-- Kho file (Storage) + cột link
+insert into storage.buckets (id, name, public) values ('post-files', 'post-files', true) on conflict (id) do nothing;
+drop policy if exists "pf_read" on storage.objects;
+drop policy if exists "pf_insert" on storage.objects;
+drop policy if exists "pf_delete" on storage.objects;
+create policy "pf_read" on storage.objects for select using (bucket_id = 'post-files');
+create policy "pf_insert" on storage.objects for insert to anon with check (bucket_id = 'post-files');
+create policy "pf_delete" on storage.objects for delete to anon using (bucket_id = 'post-files');
+alter table posts add column if not exists image_url text, add column if not exists word_url text;
+create or replace function set_post_files(p_id text, p_changes jsonb)
+returns void language sql security definer as $$
+  update posts set
+    image_url    = case when p_changes ? 'image_url' then p_changes->>'image_url'  else image_url end,
+    image_type   = case when p_changes ? 'image_url' then p_changes->>'image_type' else image_type end,
+    image_name   = case when p_changes ? 'image_url' then p_changes->>'image_name' else image_name end,
+    image_base64 = case when p_changes ? 'image_url' then '' else image_base64 end,
+    word_url     = case when p_changes ? 'word_url'  then p_changes->>'word_url'   else word_url end,
+    word_type    = case when p_changes ? 'word_url'  then p_changes->>'word_type'  else word_type end,
+    word_name    = case when p_changes ? 'word_url'  then p_changes->>'word_name'  else word_name end,
+    word_base64  = case when p_changes ? 'word_url'  then '' else word_base64 end
+  where id::text = p_id;
+$$;
+grant execute on function set_post_files(text, jsonb) to anon;</pre>
+      <button type="button" class="chip-btn neutral" id="copySql">Sao chép SQL</button>
+    </details>
+  </form>
+</div>
+<div class="splitter" id="splitter" role="separator" aria-orientation="vertical" aria-label="Kéo để đổi độ rộng khung xem trước" title="Kéo để phóng to / thu nhỏ khung xem trước (nhấp đúp để đặt lại)" tabindex="0"></div>
+<aside class="preview pv" id="preview" aria-label="Xem trước bài viết">
+  <div class="pv-top">
+    <div class="pv-head">
+      <strong>Xem trước trên website</strong>
+      <span class="pv-where" id="pvWhere"></span>
+    </div>
+    <div class="pv-zoom" aria-label="Phóng to thu nhỏ nội dung xem trước">
+      <button type="button" id="zOut" aria-label="Thu nhỏ">−</button>
+      <span class="z-val" id="zVal">100%</span>
+      <button type="button" id="zIn" aria-label="Phóng to">+</button>
+    </div>
+  </div>
+  <div class="pv-tabs" role="tablist">
+    <button type="button" role="tab" class="on" data-pvtab="card">Thẻ bài viết</button>
+    <button type="button" role="tab" data-pvtab="article">Trang bài viết</button>
+    <button type="button" role="tab" data-pvtab="home" id="pvHomeTab">Băng tin trang chủ</button>
+  </div>
+  <div class="pv-stage">
+    <div id="pvCard"></div>
+    <div id="pvArticle" hidden></div>
+    <div id="pvHome" hidden></div>
+  </div>
+  <div class="pv-check" id="pvCheck"></div>
+  <div class="pv-ready" id="pvReady"></div>
+  <p class="pv-note">Bấm vào một phần trong bản xem trước để nhảy tới ô cần sửa. Đây là bản mô phỏng — chữ và màu trên website thật có thể khác đôi chút.</p>
+</aside>
+</div>
+<button type="button" class="pv-fab" id="pvFab">Xem trước ↓</button>
+<script>
+  // ============================================================
+  // Cấu hình Supabase (cùng dự án/bảng với trang chủ)
+  // ============================================================
+  const SUPABASE_URL = "https://dawnjnljkferinamktiq.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhd25qbmxqa2ZlcmluYW1rdGlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0MjY5NjgsImV4cCI6MjEwNDAwMjk2OH0.gWZoU3nLm4otno3eUDj9N_iRNyEPipobOm5fkOlHYao";
+  const SUPABASE_TABLE = "posts";
+
+  // Giới hạn (chỉnh ở đây nếu cần). KHÔNG giới hạn số lượng file PDF.
+  const MAX_PDF_MB   = 30;    // dung lượng tối đa mỗi file PDF
+  const MAX_WORD_MB  = 30;    // dung lượng tối đa file Word
+  const BATCH_MB     = 4;     // mỗi lô gửi lên tối đa ~4 MB file gốc (≈5,3 MB sau khi mã hóa)
+  const WARN_TOTAL_MB = 60;   // cảnh báo khi tổng PDF của một bài vượt mức này
+  const IMG_MAX_SIDE = 1600;  // ảnh minh họa được thu nhỏ về tối đa cạnh dài này
+  const DRAFT_KEY    = 'dangbai_draft_v2';
+  const STORAGE_BUCKET = 'post-files'; // kho cũ (Supabase Storage) - chỉ còn dùng để xoá file cũ
+  // ---- Cloudflare R2 (file mới được tải lên đây, bảng chỉ lưu link) ----
+  const R2_API    = "https://dangbai-r2.anhquan12106699.workers.dev"; // URL của Worker (Bước 5 trong hướng dẫn)
+  const R2_PUBLIC = "https://pub-8bed8b780590425686af835209e18e40.r2.dev";                  // địa chỉ công khai của bucket R2 (không có / cuối)
+
+  const supabaseClient = (window.supabase && SUPABASE_URL.indexOf('YOUR-PROJECT-REF') === -1)
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+      })
+    : null;
+
+  const $ = (id) => document.getElementById(id);
+  const MB = 1024 * 1024;
+  document.querySelectorAll('.max-pdf-mb').forEach(e => e.textContent = MAX_PDF_MB);
+  document.querySelectorAll('.max-word-mb').forEach(e => e.textContent = MAX_WORD_MB);
+
+  const form = $('postForm'), submitBtn = $('submitBtn'), msg = $('msg');
+
+  function fmtSize(b){
+    if (b < 1024) return b + ' B';
+    if (b < MB) return (b / 1024).toFixed(1) + ' KB';
+    return (b / MB).toFixed(2) + ' MB';
+  }
+  function showMsg(text, kind){
+    msg.textContent = text;
+    msg.className = 'msg ' + (kind === true ? 'ok' : (kind === false ? 'err' : (kind || 'err')));
+  }
+  function hideMsg(){ msg.className = 'msg'; msg.textContent = ''; }
+
+  // ---------- trạng thái ----------
+  let busy = false;            // đang tải lên
+  let cancelRequested = false;
+  let createdPostId = null;    // đã tạo bài nhưng còn file PDF chưa lên -> cho phép "tải tiếp"
+  let image = null;            // {dataUrl, type, name, size}
+  let word = null;             // {file, name, type, size}
+  let pdfItems = [];           // [{uid, file, name, size, status, err}]
+  let rpcAvailable = null;     // null chưa biết, true/false
+
+  // ---------- Thư viện: 2 mục ----------
+  const LIB_SECTIONS = [
+    { key: 'slide',   label: 'Slide bài giảng' },
+    { key: 'noidung', label: 'Tài liệu ôn tập' }
+  ];
+  const secLabel = (k) => (LIB_SECTIONS.find(s => s.key === k) || LIB_SECTIONS[1]).label;
+  const isLib = () => $('category').value === 'Thư viện';
+  const libNotes = () => LIB_SECTIONS.map(s => ({ key: s.key, text: ($('note_' + s.key).value || '').trim() })).filter(n => n.text);
+  function syncLibUI(){
+    const lib = isLib();
+    $('libPanel').hidden = !lib;
+    $('pdfSecWrap').hidden = !lib;
+    $('wordBlock').hidden = lib;
+    $('detailBlock').hidden = lib;
+    $('imageBlock').hidden = lib;
+    renderPdfList();
+  }
+
+  // ---------- tiện ích kéo thả ----------
+  function setupDrop(el, onFiles){
+    ['dragenter','dragover'].forEach(ev => el.addEventListener(ev, e => { e.preventDefault(); el.classList.add('drag'); }));
+    ['dragleave','drop'].forEach(ev => el.addEventListener(ev, e => { e.preventDefault(); el.classList.remove('drag'); }));
+    el.addEventListener('drop', e => { if (e.dataTransfer && e.dataTransfer.files.length) onFiles(Array.from(e.dataTransfer.files)); });
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); } });
+  }
+  // Chặn việc thả file ra ngoài vùng làm trình duyệt mở file đó
+  ['dragover','drop'].forEach(ev => window.addEventListener(ev, e => { if (!e.target.closest || !e.target.closest('.file-drop')) e.preventDefault(); }));
+
+  function readAsDataURL(blob){
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.onerror = () => reject(r.error || new Error('Không đọc được file'));
+      r.readAsDataURL(blob);
+    });
+  }
+  const stripDataUrl = (s) => {
+    s = String(s || '');
+    const i = s.indexOf(',');
+    return (s.indexOf('data:') === 0 && i !== -1) ? s.slice(i + 1) : s;
+  };
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+  // ---------- ẢNH (tự thu nhỏ để nhẹ) ----------
+  async function compressImage(file){
+    if (!/^image\//.test(file.type)) throw new Error('Không phải file ảnh');
+    const original = await readAsDataURL(file);
+    if (file.size < 300 * 1024 || /gif|svg/.test(file.type)) return { dataUrl: original, type: file.type, size: file.size };
+    try {
+      const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = original; });
+      const scale = Math.min(1, IMG_MAX_SIDE / Math.max(img.naturalWidth, img.naturalHeight));
+      if (scale === 1 && file.size < 1.5 * MB) return { dataUrl: original, type: file.type, size: file.size };
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.naturalWidth * scale); c.height = Math.round(img.naturalHeight * scale);
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      const out = c.toDataURL('image/jpeg', 0.85);
+      if (out.length < original.length) return { dataUrl: out, type: 'image/jpeg', size: Math.round(out.length * 0.75) };
+    } catch (e) { /* dùng ảnh gốc */ }
+    return { dataUrl: original, type: file.type, size: file.size };
+  }
+  async function setImage(file){
+    try {
+      const r = await compressImage(file);
+      image = { dataUrl: r.dataUrl, type: r.type, name: file.name, size: r.size };
+      $('imgPreview').src = r.dataUrl;
+      $('imgWrap').style.display = 'block';
+      $('imgMeta').textContent = file.name + ' · ' + fmtSize(r.size) + (r.size < file.size ? ' (đã thu nhỏ từ ' + fmtSize(file.size) + ')' : '');
+      $('fileDrop').textContent = 'Đã chọn: ' + file.name;
+      $('fileDrop').classList.add('has-file');
+    } catch (e) { showMsg('Không đọc được ảnh: ' + file.name, 'err'); }
+  }
+  function clearImage(){
+    image = null; $('imageInput').value = '';
+    $('imgWrap').style.display = 'none'; $('imgPreview').removeAttribute('src');
+    $('fileDrop').textContent = 'Bấm để chọn hoặc kéo thả ảnh vào đây';
+    $('fileDrop').classList.remove('has-file');
+  }
+  $('imageInput').addEventListener('change', () => { const f = $('imageInput').files[0]; if (f) setImage(f); });
+  $('clearImg').addEventListener('click', clearImage);
+  setupDrop($('fileDrop'), files => { const f = files.find(x => /^image\//.test(x.type)); if (f) setImage(f); else showMsg('Hãy thả file ảnh.', 'err'); });
+
+  // ---------- WORD (chỉ đọc vào bộ nhớ lúc đăng) ----------
+  function setWord(file){
+    const okType = /word|officedocument|msword/i.test(file.type) || /\.docx?$/i.test(file.name);
+    if (!okType) { showMsg('Vui lòng chọn file Word (.doc hoặc .docx).', 'err'); return; }
+    if (file.size > MAX_WORD_MB * MB) { showMsg('File Word quá lớn (tối đa ' + MAX_WORD_MB + ' MB): ' + file.name, 'err'); return; }
+    word = { file, name: file.name, size: file.size, type: file.type || 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' };
+    $('wordDrop').textContent = 'Đã chọn: ' + file.name;
+    $('wordDrop').classList.add('has-file');
+    $('wordNameLabel').textContent = file.name;
+    $('wordSizeLabel').textContent = fmtSize(file.size);
+    $('wordInfo').classList.add('show');
+  }
+  function clearWord(){
+    word = null; $('wordInput').value = '';
+    $('wordDrop').textContent = 'Bấm để chọn hoặc kéo thả file Word vào đây';
+    $('wordDrop').classList.remove('has-file');
+    $('wordInfo').classList.remove('show');
+  }
+  $('wordInput').addEventListener('change', () => { const f = $('wordInput').files[0]; if (f) setWord(f); });
+  $('clearWord').addEventListener('click', clearWord);
+  setupDrop($('wordDrop'), files => { if (files[0]) setWord(files[0]); });
+
+  // ---------- PDF ----------
+  const pdfList = $('pdfList');
+
+  async function isRealPdf(file){
+    try {
+      const head = await file.slice(0, 5).text();
+      return head.indexOf('%PDF') === 0;
+    } catch (e) { return false; }
+  }
+
+  async function addPdfFiles(files){
+    hideMsg();
+    const problems = [];
+    let added = 0;
+    for (const file of files) {
+      if (file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name)) { problems.push('Bỏ qua (không phải PDF): ' + file.name); continue; }
+      if (file.size === 0) { problems.push('File rỗng: ' + file.name); continue; }
+      if (file.size > MAX_PDF_MB * MB) { problems.push('Quá ' + MAX_PDF_MB + ' MB (' + fmtSize(file.size) + '): ' + file.name); continue; }
+      const uid = file.name + '|' + file.size + '|' + file.lastModified;
+      if (pdfItems.some(p => p.uid === uid)) { problems.push('Đã có trong danh sách: ' + file.name); continue; }
+      if (!(await isRealPdf(file))) { problems.push('File hỏng hoặc không đúng định dạng PDF: ' + file.name); continue; }
+      pdfItems.push({ uid, file, name: file.name.replace(/\.pdf$/i, ''), size: file.size, status: 'pending', err: '', section: $('pdfSection').value });
+      added++;
+    }
+    $('pdfInput').value = '';
+    renderPdfList();
+    if (problems.length) {
+      const shown = problems.slice(0, 6).join('\n') + (problems.length > 6 ? '\n… và ' + (problems.length - 6) + ' file khác.' : '');
+      showMsg('Đã thêm ' + added + ' file. Có ' + problems.length + ' file bị bỏ qua:\n' + shown, 'warn');
+    }
+  }
+
+  function statusLabel(it){
+    if (it.status === 'done') return '✓ Đã tải lên';
+    if (it.status === 'uploading') return 'Đang tải lên…';
+    if (it.status === 'error') return '';
+    return 'Chờ tải lên';
+  }
+
+  function renderPdfList(){
+    pdfList.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    pdfItems.forEach((it, idx) => {
+      const row = document.createElement('div');
+      row.className = 'pdf-info st-' + it.status;
+      row.innerHTML =
+        '<div class="pdf-icon">PDF</div>' +
+        '<div class="pdf-meta"><input type="text" class="pdf-name" aria-label="Tên hiển thị của file PDF" maxlength="150"><div class="pdf-sub"></div></div>' +
+        '<div class="pdf-btns"><button type="button" class="chip-btn neutral up" title="Lên" aria-label="Đưa lên">↑</button>' +
+        '<button type="button" class="chip-btn neutral down" title="Xuống" aria-label="Đưa xuống">↓</button>' +
+        '<button type="button" class="chip-btn rm" aria-label="Xóa file">Xóa</button></div>';
+      if (isLib()) {
+        const sel = document.createElement('select');
+        sel.className = 'pdf-sec'; sel.setAttribute('aria-label', 'Mục của file PDF');
+        sel.innerHTML = LIB_SECTIONS.map(s => '<option value="' + s.key + '">' + s.label + '</option>').join('');
+        sel.value = (it.section && it.section !== 'yeucau') ? it.section : 'noidung';
+        sel.disabled = busy || it.status === 'done';
+        sel.addEventListener('change', () => { it.section = sel.value; });
+        row.querySelector('.pdf-meta').insertBefore(sel, row.querySelector('.pdf-sub'));
+      }
+      const nameEl = row.querySelector('.pdf-name');
+      nameEl.value = it.name;
+      nameEl.disabled = busy || it.status === 'done';
+      nameEl.addEventListener('input', () => { it.name = nameEl.value; });
+      const sub = row.querySelector('.pdf-sub');
+      sub.textContent = (idx + 1) + '/' + pdfItems.length + ' · ' + fmtSize(it.size) + (statusLabel(it) ? ' · ' + statusLabel(it) : '');
+      if (it.status === 'error') { const s = document.createElement('span'); s.className = 'err'; s.textContent = ' · Lỗi: ' + it.err; sub.appendChild(s); }
+      const locked = busy || it.status === 'done';
+      const up = row.querySelector('.up'), down = row.querySelector('.down'), rm = row.querySelector('.rm');
+      up.disabled = locked || idx === 0;
+      down.disabled = locked || idx === pdfItems.length - 1;
+      rm.disabled = locked;
+      up.addEventListener('click', () => { [pdfItems[idx-1], pdfItems[idx]] = [pdfItems[idx], pdfItems[idx-1]]; renderPdfList(); });
+      down.addEventListener('click', () => { [pdfItems[idx+1], pdfItems[idx]] = [pdfItems[idx], pdfItems[idx+1]]; renderPdfList(); });
+      rm.addEventListener('click', () => { pdfItems.splice(idx, 1); renderPdfList(); });
+      frag.appendChild(row);
+    });
+    pdfList.appendChild(frag);
+
+    const total = pdfItems.reduce((s, p) => s + p.size, 0);
+    const done = pdfItems.filter(p => p.status === 'done').length;
+    $('pdfToolbar').classList.toggle('show', pdfItems.length > 0);
+    $('pdfSummary').textContent = pdfItems.length + ' file · ' + fmtSize(total) + (done ? ' · đã lên ' + done : '');
+    $('sortPdf').disabled = busy || pdfItems.length < 2;
+    $('clearAllPdf').disabled = busy;
+    $('pdfDrop').textContent = pdfItems.length ? 'Đã chọn ' + pdfItems.length + ' file PDF — bấm hoặc kéo thả để thêm nữa' : 'Bấm để chọn hoặc kéo thả nhiều file PDF vào đây';
+    $('pdfDrop').classList.toggle('has-file', pdfItems.length > 0);
+  }
+
+  $('pdfInput').addEventListener('change', () => addPdfFiles(Array.from($('pdfInput').files || [])));
+  setupDrop($('pdfDrop'), files => addPdfFiles(files));
+  $('sortPdf').addEventListener('click', () => {
+    const doneItems = pdfItems.filter(p => p.status === 'done');
+    const rest = pdfItems.filter(p => p.status !== 'done').sort((a, b) => a.name.localeCompare(b.name, 'vi', { numeric: true, sensitivity: 'base' }));
+    pdfItems = doneItems.concat(rest);
+    renderPdfList();
+  });
+  $('clearAllPdf').addEventListener('click', () => {
+    if (pdfItems.length > 5 && !confirm('Xóa tất cả ' + pdfItems.length + ' file PDF đã chọn?')) return;
+    pdfItems = []; renderPdfList();
+  });
+
+  // ---------- bản nháp (chỉ phần chữ) ----------
+  const DRAFT_FIELDS = ['category','title','badge','content','detail','docUrl','note_slide','note_noidung'];
+  let draftTimer = null;
+  function saveDraft(){
+    clearTimeout(draftTimer);
+    draftTimer = setTimeout(() => {
+      try {
+        const d = {}; DRAFT_FIELDS.forEach(k => d[k] = $(k).value);
+        if (DRAFT_FIELDS.some(k => k !== 'category' && d[k].trim())) localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+        else localStorage.removeItem(DRAFT_KEY);
+      } catch (e) {}
+    }, 400);
+  }
+  function loadDraft(){
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY); if (!raw) return;
+      const d = JSON.parse(raw);
+      DRAFT_FIELDS.forEach(k => { if (typeof d[k] === 'string') $(k).value = d[k]; });
+      $('draftNote').classList.add('show');
+      updateCounter();
+    } catch (e) {}
+  }
+  function clearDraft(){ try { localStorage.removeItem(DRAFT_KEY); } catch (e) {} $('draftNote').classList.remove('show'); }
+  $('clearDraft').addEventListener('click', () => { form.reset(); updateCounter(); clearDraft(); });
+  function updateCounter(){ $('contentCount').textContent = $('content').value.length + '/400'; }
+  DRAFT_FIELDS.forEach(k => $(k).addEventListener('input', () => { saveDraft(); if (k === 'content') updateCounter(); }));
+  $('category').addEventListener('change', () => { saveDraft(); syncLibUI(); });
+
+  $('copySql').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText($('sqlBox').textContent); $('copySql').textContent = 'Đã sao chép ✓'; }
+    catch (e) { const r = document.createRange(); r.selectNodeContents($('sqlBox')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $('copySql').textContent = 'Hãy nhấn Ctrl+C'; }
+    setTimeout(() => $('copySql').textContent = 'Sao chép SQL', 2500);
+  });
+
+  // ---------- tiến trình ----------
+  function setProgress(text, pct){
+    $('progress').classList.add('show');
+    $('pText').textContent = text;
+    $('pBar').style.width = Math.max(0, Math.min(100, pct)) + '%';
+  }
+  function hideProgress(){ $('progress').classList.remove('show'); }
+  $('cancelUpload').addEventListener('click', () => {
+    cancelRequested = true; $('cancelUpload').disabled = true; $('cancelUpload').textContent = 'Sẽ dừng sau lô hiện tại…';
+  });
+
+  function setBusy(v){
+    busy = v;
+    submitBtn.disabled = v;
+    if (!v) submitBtn.textContent = createdPostId ? 'Tải tiếp các file còn lại' : 'Đăng bài';
+    form.querySelectorAll('input:not([type=file]), select, textarea').forEach(el => { if (!el.classList.contains('pdf-name')) el.disabled = v; });
+    renderPdfList();
+  }
+
+  window.addEventListener('beforeunload', (e) => {
+    if (busy || createdPostId) { e.preventDefault(); e.returnValue = ''; }
+  });
+
+  // ---------- Supabase Storage ----------
+  const safeName = (t) => String(t || 'file').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').replace(/[^a-zA-Z0-9._-]+/g,'-').slice(0,60);
+  const rnd = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+  function r2Key(){
+    let k = ''; try { k = sessionStorage.getItem('r2_key') || ''; } catch (e) {}
+    if (!k) { k = prompt('Nhập mật khẩu đăng bài (UPLOAD_KEY):') || ''; if (k) { try { sessionStorage.setItem('r2_key', k); } catch (e) {} } }
+    return k;
+  }
+  async function uploadToStorage(blob, folder, name, type){
+    const path = folder + '/' + rnd() + '-' + safeName(name);
+    let res;
+    try {
+      res = await fetch(R2_API + '/upload?path=' + encodeURIComponent(path), {
+        method: 'PUT', body: blob,
+        headers: { 'Content-Type': type || 'application/octet-stream', 'X-Upload-Key': r2Key() }
+      });
+    } catch (e) { const er = new Error('Không kết nối được Worker R2. Kiểm tra R2_API. Chi tiết: ' + e.message); er.code = '42501'; throw er; }
+    if (!res.ok) {
+      if (res.status === 401) { try { sessionStorage.removeItem('r2_key'); } catch (e) {} }
+      let m = ''; try { m = (await res.json()).error; } catch (e) {}
+      const er = new Error('Không tải file lên R2 được (' + res.status + '). ' + (m || '')); er.code = '42501'; throw er;
+    }
+    const j = await res.json();
+    return { path: 'r2:' + path, url: j.url };
+  }
+  const dataUrlToBlob = (d) => fetch(d).then(r => r.blob());
+  const pathFromUrl = (u) => {
+    u = String(u || '');
+    if (R2_PUBLIC && u.indexOf(R2_PUBLIC + '/') === 0) return 'r2:' + decodeURIComponent(u.slice(R2_PUBLIC.length + 1));
+    const m = u.split('/object/public/' + STORAGE_BUCKET + '/'); return m.length === 2 ? decodeURIComponent(m[1]) : '';
+  };
+  async function removeStored(paths){
+    paths = (paths || []).filter(Boolean); if (!paths.length) return;
+    const r2 = paths.filter(p => p.indexOf('r2:') === 0).map(p => p.slice(3));
+    const old = paths.filter(p => p.indexOf('r2:') !== 0);
+    try { if (old.length) await supabaseClient.storage.from(STORAGE_BUCKET).remove(old); } catch (e) {}
+    try { if (r2.length) await fetch(R2_API + '/delete', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Upload-Key': r2Key() }, body: JSON.stringify({ paths: r2 }) }); } catch (e) {}
+  }
+
+  // ---------- gửi lên Supabase ----------
+  const isPermanent = (err) => {
+    const t = ((err && (err.code || '')) + ' ' + (err && err.message || '')).toLowerCase();
+    return /42501|row-level security|permission|not allowed|jwt|pgrst30|rls/.test(t);
+  };
+  async function withRetry(fn, tries = 3){
+    let last;
+    for (let i = 0; i < tries; i++) {
+      try { return await fn(); }
+      catch (e) {
+        last = e;
+        if (isPermanent(e) || cancelRequested) break;
+        await sleep(700 * Math.pow(2, i));
+      }
+    }
+    throw last;
+  }
+
+  async function pdfEntry(it){
+    const nm = (it.name.trim() || 'tai-lieu') + '.pdf';
+    const up = await uploadToStorage(it.file, 'pdf', nm, 'application/pdf');
+    const e = { uid: it.uid, name: nm, type: 'application/pdf', url: up.url, path: up.path };
+    if (isLib()) e.section = it.section || 'noidung';
+    return e;
+  }
+
+  // Chia các file chưa lên thành lô theo dung lượng. Lô đầu trừ phần Word + ảnh.
+  function makeBatches(items, firstReserve){
+    const limit = BATCH_MB * MB, batches = [];
+    let cur = [], used = 0, budget = Math.max(0, limit - firstReserve);
+    for (const it of items) {
+      if (cur.length && used + it.size > budget) { batches.push(cur); cur = []; used = 0; budget = limit; }
+      else if (!cur.length && batches.length === 0 && firstReserve > 0 && it.size > budget) { batches.push([]); budget = limit; }
+      cur.push(it); used += it.size;
+    }
+    if (cur.length) batches.push(cur);
+    if (!batches.length) batches.push([]);
+    return batches;
+  }
+
+  async function appendPdfs(postId, entries){
+    if (rpcAvailable !== false) {
+      const { error } = await supabaseClient.rpc('append_pdfs', { p_id: String(postId), p_items: entries });
+      if (!error) { rpcAvailable = true; return; }
+      const t = (error.code || '') + ' ' + (error.message || '');
+      if (/PGRST202|42883|could not find|does not exist/i.test(t)) rpcAvailable = false;
+      else throw error;
+    }
+    const { data, error: e1 } = await supabaseClient.from(SUPABASE_TABLE).select('pdfs').eq('id', postId).single();
+    if (e1) throw e1;
+    const current = Array.isArray(data && data.pdfs) ? data.pdfs : [];
+    const have = new Set(current.map(x => x && x.uid).filter(Boolean));
+    const merged = current.concat(entries.filter(x => !have.has(x.uid)));
+    const { data: upd, error: e2 } = await supabaseClient.from(SUPABASE_TABLE).update({ pdfs: merged }).eq('id', postId).select('id');
+    if (e2) throw e2;
+    if (!upd || !upd.length) {
+      const err = new Error('Bảng không cho phép sửa bài để thêm PDF (RLS). Hãy chạy đoạn SQL ở mục "Cài đặt Supabase" bên dưới.');
+      err.code = '42501'; throw err;
+    }
+  }
+
+  function resetAll(){
+    form.reset(); updateCounter(); clearImage(); clearWord(); pdfItems = []; createdPostId = null;
+    clearDraft(); renderPdfList();
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (busy) return;
+    hideMsg();
+
+    if (!supabaseClient) {
+      showMsg('Không kết nối được Supabase (có thể thư viện bị chặn hoặc mất mạng). Hãy kiểm tra mạng, tải lại trang rồi thử lại.', 'err');
+      return;
+    }
+    if (navigator.onLine === false) { showMsg('Bạn đang offline. Hãy kết nối mạng rồi thử lại.', 'err'); return; }
+
+    const title = $('title').value.trim(), content = $('content').value.trim();
+    const docUrl = $('docUrl').value.trim(), detailText = $('detail').value.trim();
+    const resuming = createdPostId !== null;
+
+    if (!resuming) {
+      if (!title || !content) { showMsg('Vui lòng điền đầy đủ Tiêu đề và Tóm tắt.', 'err'); (!title ? $('title') : $('content')).focus(); return; }
+      if (isLib()) {
+        if (!pdfItems.length && !libNotes().length) { showMsg('Bài Thư viện cần ít nhất một file PDF hoặc một ghi chú trong 2 mục.', 'err'); return; }
+      } else if (!word && !docUrl && !detailText) { showMsg('Vui lòng tải file Word, hoặc dán nội dung / link Google Doc ở phần tuỳ chọn.', 'err'); return; }
+      if (docUrl && !/^https?:\/\//i.test(docUrl)) { showMsg('Link Google Doc phải bắt đầu bằng http:// hoặc https://', 'err'); $('docUrl').focus(); return; }
+    }
+
+    const pending = pdfItems.filter(p => p.status !== 'done');
+    const totalPdf = pdfItems.reduce((s, p) => s + p.size, 0);
+    if (!resuming && totalPdf > WARN_TOTAL_MB * MB &&
+        !confirm('Tổng dung lượng PDF là ' + fmtSize(totalPdf) + '. Bài sẽ tải chậm khi người đọc mở. Vẫn đăng?')) return;
+
+    cancelRequested = false;
+    $('cancelUpload').disabled = false; $('cancelUpload').textContent = 'Dừng sau lô hiện tại';
+    setBusy(true);
+    submitBtn.textContent = resuming ? 'Đang tải tiếp…' : 'Đang đăng…';
+    pending.forEach(p => { p.status = 'pending'; p.err = ''; });
+
+    const wordBytes = (!resuming && word) ? word.size : 0;
+    const imgBytes = (!resuming && image) ? image.size : 0;
+    const batches = makeBatches(pending, wordBytes + imgBytes);
+    const totalBytes = pending.reduce((s, p) => s + p.size, 0) + wordBytes + imgBytes || 1;
+    let sentBytes = 0;
+
+    try {
+      for (let b = 0; b < batches.length; b++) {
+        if (cancelRequested) break;
+        const batch = batches[b];
+        batch.forEach(p => p.status = 'uploading');
+        renderPdfList();
+        const isFirst = (b === 0 && !resuming);
+        setProgress((isFirst ? 'Đang đăng bài' : 'Đang tải PDF') + ' — lô ' + (b + 1) + '/' + batches.length +
+          ' (' + batch.length + ' file)…', (sentBytes / totalBytes) * 100);
+        try {
+          const entries = [];
+          for (const it of batch) entries.push(await pdfEntry(it));
+          if (isFirst && isLib()) libNotes().forEach(n => entries.push({ uid: 'note:' + n.key, kind: 'note', section: n.key, text: n.text }));
+
+          if (isFirst) {
+            const payload = {
+              category: $('category').value,
+              title, badge: $('badge').value.trim(), content,
+              doc_url: docUrl, detail: detailText,
+              image_base64: '', image_url: '',
+              image_type: image ? image.type : '',
+              image_name: image ? image.name : '',
+              word_base64: '', word_url: '', word_type: '', word_name: '',
+              pdfs: entries
+            };
+            if (image) payload.image_url = (await uploadToStorage(await dataUrlToBlob(image.dataUrl), 'img', image.name, image.type)).url;
+            if (word) {
+              payload.word_url = (await uploadToStorage(word.file, 'word', word.name, word.type)).url;
+              payload.word_type = word.type; payload.word_name = word.name;
+            }
+            const multi = batches.length > 1;
+            const newId = await withRetry(async () => {
+              if (!multi) {
+                const { error } = await supabaseClient.from(SUPABASE_TABLE).insert([payload]);
+                if (error) throw error;
+                return true;
+              }
+              const { data, error } = await supabaseClient.from(SUPABASE_TABLE).insert([payload]).select('id');
+              if (error) throw error;
+              if (!data || !data.length) { const er = new Error('Không lấy được mã bài vừa tạo (cần quyền đọc bảng).'); er.code = '42501'; throw er; }
+              return data[0].id;
+            });
+            if (multi) createdPostId = newId;
+          } else {
+            await withRetry(() => appendPdfs(createdPostId, entries));
+          }
+          batch.forEach(p => { p.status = 'done'; });
+          sentBytes += batch.reduce((s, p) => s + p.size, 0) + (isFirst ? wordBytes + imgBytes : 0);
+          setProgress('Đã xong lô ' + (b + 1) + '/' + batches.length, (sentBytes / totalBytes) * 100);
+          renderPdfList();
+        } catch (err) {
+          batch.forEach(p => { p.status = 'error'; p.err = (err && err.message) ? err.message : String(err); });
+          throw err;
+        }
+      }
+
+      const left = pdfItems.filter(p => p.status !== 'done').length;
+      if (cancelRequested && left) {
+        hideProgress();
+        showMsg('Đã dừng. ' + (createdPostId !== null ? 'Bài đã được đăng nhưng còn ' + left + ' file PDF chưa lên. Bấm "Tải tiếp các file còn lại" để hoàn tất.' : 'Chưa có gì được đăng.'), 'warn');
+        if (createdPostId === null) pdfItems.forEach(p => { if (p.status !== 'done') p.status = 'pending'; });
+      } else {
+        setProgress('Hoàn tất', 100);
+        const n = pdfItems.length;
+        resetAll();
+        showMsg('Đăng bài thành công' + (n ? ' (kèm ' + n + ' file PDF)' : '') + '! Mở lại trang chủ là thấy bài ngay.', true);
+        setTimeout(hideProgress, 1500);
+      }
+    } catch (err) {
+      hideProgress();
+      const left = pdfItems.filter(p => p.status !== 'done').length;
+      const reason = (err && err.message) ? err.message : String(err);
+      if (createdPostId !== null) {
+        showMsg('Bài đã được đăng nhưng còn ' + left + ' file PDF chưa lên.\nLý do: ' + reason + '\nBấm "Tải tiếp các file còn lại" để thử lại — các file đã lên sẽ không bị tải lại.', 'err');
+      } else {
+        showMsg('Không gửi được bài, chưa có gì được đăng.\nLý do: ' + reason + '\nKiểm tra mạng hoặc cấu hình Supabase rồi bấm Đăng bài lần nữa.', 'err');
+        pdfItems.forEach(p => { if (p.status === 'uploading') p.status = 'pending'; });
+      }
+    } finally {
+      setBusy(false);
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !busy) { e.preventDefault(); form.requestSubmit(); }
+  });
+
+  // ============================================================
+  // XEM TRƯỚC TRỰC TIẾP (bên cạnh form)
+  // ============================================================
+  const esc = (t) => String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const WHERE = {
+    'Thông báo': ['Tin tức › Thông báo', 'thẻ dạng thông báo; cũng chạy trong băng "Tin mới nhất" ở trang chủ'],
+    'Tin ngành Toán kinh tế': ['Tin tức › Tin ngành Toán kinh tế', 'thẻ có ảnh; cũng chạy trong băng "Tin mới nhất" ở trang chủ'],
+    'Hội thảo - Tọa đàm': ['Hội thảo - Tọa đàm', 'thẻ có ảnh; cũng chạy trong băng "Tin mới nhất" ở trang chủ'],
+    'Thư viện': ['Thư viện', 'thẻ tài liệu; không hiện trong băng "Tin mới nhất"']
+  };
+  let pvTab = 'card';
+  let pvRaf = 0;
+  let pvFocus = '';
+  const wordPreview = { key: '', html: '', state: 'idle' }; // idle | loading | ok | fail
+
+  const ph = (t) => '<span class="pv-ph">' + esc(t) + '</span>';
+  function pvDate(){
+    const d = new Date();
+    return { day: String(d.getDate()).padStart(2,'0'), mon: 'Th' + (d.getMonth()+1) + ' ' + d.getFullYear(), full: String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear() };
+  }
+
+  function pvCardHtml(v){
+    const dt = pvDate();
+    const title = v.title ? esc(v.title) : ph('Tiêu đề bài viết');
+    const summary = v.content ? esc(v.content) : ph('Phần tóm tắt sẽ hiện ở đây…');
+    if (v.category === 'Thông báo') {
+      return '<div class="notice-card">' +
+        '<div class="notice-date"><span class="day">' + dt.day + '</span><span class="mon">' + dt.mon + '</span></div>' +
+        '<div class="notice-body"><h3 data-field="title">' + title + '</h3><p data-field="content">' + summary + '</p></div>' +
+        (v.badge ? '<span class="notice-tag" data-field="badge">' + esc(v.badge) + '</span>' : '') +
+        '</div>' + (image ? '<p class="pv-note" style="text-align:center">Thẻ Thông báo trên website không hiện ảnh.</p>' : '');
+    }
+    if (v.category === 'Thư viện') {
+      const isDoc = (word) && !pdfItems.length;
+      return '<div class="lib-card"><div class="lib-card-top"><div class="lib-card-icon">' + (isDoc ? 'DOC' : 'PDF') + '</div>' +
+        (v.badge ? '<span class="lib-badge" data-field="badge">' + esc(v.badge) + '</span>' : '') + '</div>' +
+        '<h3 data-field="title">' + title + '</h3><p data-field="content">' + summary + '</p>' +
+        '<div class="lib-card-meta"><span>' + dt.day + ' ' + dt.mon + '</span><span class="dot"></span><span>' + (isDoc ? 'Xem / tải file Word' : 'Xem / tải PDF') + '</span></div></div>';
+    }
+    const bg = image ? ' style="background-image:url(\'' + esc(image.dataUrl) + '\')"' : '';
+    return '<div class="news-card"><div class="news-card-thumb" data-field="fileDrop"' + bg + '>' +
+      (v.badge ? '<span class="badge" data-field="badge">' + esc(v.badge) + '</span>' : '') + '</div>' +
+      '<div class="news-card-body"><div class="news-card-meta"><span>' + dt.day + ' ' + dt.mon + '</span>' +
+      (v.badge ? '<span class="dot"></span><span>' + esc(v.badge) + '</span>' : '') + '</div>' +
+      '<h3 data-field="title">' + title + '</h3><p data-field="content">' + summary + '</p></div></div>' +
+      (image ? '' : '<p class="pv-note" style="text-align:center">Chưa có ảnh: thẻ hiện nền xanh mặc định.</p>');
+  }
+
+  function pvArticleHtml(v){
+    const dt = pvDate();
+    let body;
+    if (word) {
+      const chip = '<div class="a-file" data-field="wordDrop"><b>W</b><span>Nội dung lấy từ file Word: <b>' + esc(word.name) + '</b> (' + fmtSize(word.size) + ')</span></div>';
+      if (wordPreview.state === 'ok') body = chip + '<div class="a-body" data-field="wordDrop">' + wordPreview.html + '</div><p class="pv-note">Bản xem nhanh nội dung Word — trên website có thể hiển thị chính xác hơn về căn lề, bảng và ảnh.</p>';
+      else if (wordPreview.state === 'loading') body = chip + '<p class="pv-note">Đang tạo bản xem nhanh nội dung…</p>';
+      else body = chip + '<p class="pv-note">Trên website, nội dung file Word được hiển thị thành văn bản để đọc online và có nút tải về.</p>';
+    } else if (v.detail) {
+      body = '<div class="a-body plain" data-field="detail">' + esc(v.detail) + '</div>';
+    } else if (v.docUrl) {
+      body = '<div class="a-file" data-field="docUrl"><b>🔗</b><span>Nội dung lấy từ Google Doc: <b>' + esc(v.docUrl) + '</b></span></div>';
+    } else {
+      body = '<div class="a-body" data-field="detail">' + ph('Nội dung bài (file Word, chữ gõ tay hoặc link Google Doc) sẽ hiện ở đây…') + '</div>';
+    }
+    if (v.category === 'Thư viện') {
+      const notes = libNotes();
+      const secs = LIB_SECTIONS.map(s => {
+        const files = pdfItems.filter(p => (p.section || 'noidung') === s.key);
+        const note = (notes.find(n => n.key === s.key) || {}).text || '';
+        return '<div class="a-pdfs" data-field="' + (note ? 'note_' + s.key : 'pdfDrop') + '"><h4>▾ ' + esc(s.label) + ' (' + files.length + ' file)</h4>' +
+          (note ? '<div class="a-body plain">' + esc(note) + '</div>' : '') +
+          files.map(p => '<div class="a-pdf"><span class="ic">PDF</span><span class="nm">' + esc((p.name || 'tai-lieu') + '.pdf') + '</span><span class="bt">Xem</span><span class="bt">Tải về</span></div>').join('') +
+          (!files.length && !note ? '<p class="pv-note">Chưa có nội dung.</p>' : '') + '</div>';
+      }).join('');
+      const meta2 = '<div class="a-meta"><span class="ap-date">Ngày phát hành: ' + dt.full + '</span></div>';
+      const sum2 = v.content ? '<div class="a-summary" data-field="content">' + esc(v.content) + '</div>' : '';
+      return '<div class="pv-art"><div class="ap-hero"><div class="ap-nav"><span>Trang chủ</span><span class="sep">▸</span><span class="gold" data-field="category">' + esc(v.category) + '</span></div>' +
+        '<h2 class="ap-title" data-field="title">' + (v.title ? esc(v.title) : ph('Tiêu đề bài viết')) + '</h2></div>' +
+        '<div class="ap-main">' + meta2 + sum2 + secs + '</div></div>';
+    }
+    const pdfs = pdfItems.length
+      ? '<div class="a-pdfs" data-field="pdfDrop"><h4>Tài liệu PDF đính kèm (' + pdfItems.length + ')</h4>' +
+        pdfItems.slice(0, 8).map(p => '<div class="a-pdf"><span class="ic">PDF</span><span class="nm">' + esc((p.name || 'tai-lieu') + '.pdf') + '</span><span class="bt">Xem</span><span class="bt">Tải về</span></div>').join('') +
+        (pdfItems.length > 8 ? '<p class="pv-note">… và ' + (pdfItems.length - 8) + ' file nữa.</p>' : '') + '</div>'
+      : '';
+    // Website chỉ hiện tóm tắt khi bài còn nội dung khác bên dưới và tóm tắt không trùng nội dung
+    const hasBody = !!(word || v.docUrl || v.detail || pdfItems.length);
+    const showSummary = !!v.content && hasBody && v.content !== v.detail;
+    const summary = showSummary ? '<div class="a-summary" data-field="content">' + esc(v.content) + '</div>' : '';
+    const meta = '<div class="a-meta"><span class="ap-date">Ngày phát hành: ' + dt.full + '</span>' +
+      (v.badge ? '<span class="dot"></span><span class="badge" data-field="badge">' + esc(v.badge) + '</span>' : '') + '</div>';
+    return '<div class="pv-art">' +
+      '<div class="ap-hero"><div class="ap-nav"><span>Trang chủ</span><span class="sep">▸</span><span class="gold" data-field="category">' + esc(v.category) + '</span></div>' +
+      '<h2 class="ap-title" data-field="title">' + (v.title ? esc(v.title) : ph('Tiêu đề bài viết')) + '</h2></div>' +
+      '<div class="ap-main">' + summary + meta + body + pdfs +
+      '<p class="pv-note">Trang bài viết không hiện ảnh bìa — ảnh chỉ dùng cho thẻ tin bên ngoài.</p></div></div>';
+  }
+
+  // Băng "Tin mới nhất" ở trang chủ (không có tài liệu Thư viện)
+  function pvHomeHtml(v){
+    const dt = pvDate();
+    const title = v.title ? esc(v.title) : ph('Tiêu đề bài viết');
+    const summary = v.content ? esc(v.content) : ph('Phần tóm tắt sẽ hiện ở đây…');
+    const bg = image ? ' style="background-image:url(\'' + esc(image.dataUrl) + '\')"' : '';
+    return '<div class="hn-marquee-card"><div class="hn-marquee-thumb" data-field="fileDrop"' + bg + '>' +
+      (v.badge ? '<span class="badge" data-field="badge">' + esc(v.badge) + '</span>' : '') + '</div>' +
+      '<div class="hn-marquee-body"><div class="hn-marquee-meta"><span>' + dt.day + ' ' + dt.mon + '</span><span class="dot"></span><span data-field="category">' + esc(v.category) + '</span></div>' +
+      '<h4 data-field="title">' + title + '</h4><p data-field="content">' + summary + '</p></div></div>' +
+      '<p class="pv-note" style="text-align:center">Trên trang chủ, các thẻ này tự chạy ngang thành một băng chuyền.</p>';
+  }
+
+  function pvChecklist(v){
+    const hasBody = v.category === 'Thư viện' ? !!(pdfItems.length || libNotes().length) : !!(word || v.docUrl || v.detail);
+    const items = [
+      { id: 'title', label: 'Tiêu đề', ok: !!v.title, req: true },
+      { id: 'content', label: 'Tóm tắt', ok: !!v.content, req: true },
+      { id: v.category === 'Thư viện' ? 'pdfDrop' : 'wordDrop', label: v.category === 'Thư viện' ? 'Nội dung 2 mục (PDF hoặc ghi chú)' : 'Nội dung bài', ok: hasBody, req: true },
+      { id: 'fileDrop', label: 'Ảnh', ok: !!image, req: false },
+      { id: 'pdfDrop', label: pdfItems.length ? pdfItems.length + ' PDF' : 'PDF', ok: pdfItems.length > 0, req: false }
+    ];
+    $('pvCheck').innerHTML = items.map(i =>
+      '<button type="button" class="pv-chip ' + (i.ok ? 'ok' : (i.req ? 'miss' : '')) + '" data-field="' + i.id + '">' +
+      (i.ok ? '✓ ' : (i.req ? '! ' : '○ ')) + i.label + (i.req ? '' : ' (tuỳ chọn)') + '</button>').join('');
+    const missing = items.filter(i => i.req && !i.ok).map(i => i.label);
+    const r = $('pvReady');
+    if (createdPostId !== null) { r.className = 'pv-ready miss'; r.textContent = 'Bài đã đăng — còn file PDF chưa lên, bấm "Tải tiếp các file còn lại".'; }
+    else if (missing.length) { r.className = 'pv-ready miss'; r.textContent = 'Còn thiếu: ' + missing.join(', ') + '.'; }
+    else { r.className = 'pv-ready ok'; r.textContent = '✓ Đã đủ thông tin bắt buộc — kiểm tra lại rồi bấm "Đăng bài".'; }
+  }
+
+  function renderPreview(){
+    pvRaf = 0;
+    const v = {
+      category: $('category').value, title: $('title').value.trim(), badge: $('badge').value.trim(),
+      content: $('content').value.trim(), detail: $('detail').value.trim(), docUrl: $('docUrl').value.trim()
+    };
+    const w = WHERE[v.category] || ['', ''];
+    $('pvWhere').innerHTML = 'Sẽ hiện ở: <b>' + esc(w[0]) + '</b> — ' + esc(w[1]);
+    const noHome = v.category === 'Thư viện';
+    $('pvHomeTab').hidden = noHome;
+    if (noHome && pvTab === 'home') pvTab = 'card';
+    $('pvCard').innerHTML = pvCardHtml(v);
+    $('pvArticle').innerHTML = pvArticleHtml(v);
+    $('pvHome').innerHTML = noHome ? '' : pvHomeHtml(v);
+    $('pvCard').hidden = pvTab !== 'card';
+    $('pvArticle').hidden = pvTab !== 'article';
+    $('pvHome').hidden = pvTab !== 'home';
+    document.querySelectorAll('[data-pvtab]').forEach(b => b.classList.toggle('on', b.getAttribute('data-pvtab') === pvTab));
+    pvChecklist(v);
+    markFocus();
+    if (pvTab === 'article' && word) ensureWordPreview();
+  }
+  function schedulePreview(){ if (!pvRaf) pvRaf = requestAnimationFrame(renderPreview); }
+
+  // --- làm nổi bật phần tương ứng khi bấm vào ô nhập ---
+  const FOCUS_MAP = { docUrl: 'detail' };
+  function markFocus(){
+    const f = FOCUS_MAP[pvFocus] || pvFocus;
+    document.querySelectorAll('#preview [data-field]').forEach(el => el.classList.toggle('hl', !!f && el.getAttribute('data-field') === f && !el.classList.contains('pv-chip')));
+  }
+  document.addEventListener('focusin', (e) => {
+    const t = e.target; if (!t || !t.id || t.closest('#preview')) return;
+    pvFocus = t.id; markFocus();
+    // tự chuyển tab xem trước cho đúng chỗ đang sửa
+    if (['detail','docUrl'].includes(t.id) && pvTab !== 'article') { pvTab = 'article'; schedulePreview(); }
+    else if (['title','badge','content','category','fileDrop'].includes(t.id) && pvTab !== 'card' && t.id !== 'title' && t.id !== 'badge') { /* giữ nguyên tab */ }
+  });
+  document.addEventListener('focusout', (e) => { if (!e.relatedTarget || !e.relatedTarget.id) { pvFocus = ''; markFocus(); } });
+
+  // --- bấm vào bản xem trước -> nhảy tới ô cần sửa ---
+  document.addEventListener('click', (e) => {
+    const el = e.target.closest && e.target.closest('#preview [data-field]'); if (!el) return;
+    let id = el.getAttribute('data-field');
+    if (id === 'detail' || id === 'docUrl') { const d = $('detail').closest('details'); if (d) d.open = true; }
+    const target = $(id) || $('title'); if (!target) return;
+    const box = target.closest('div') || target;
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const isFileDrop = /Drop$/.test(id);
+    if (!isFileDrop) setTimeout(() => target.focus({ preventScroll: true }), 250);
+    target.classList.remove('flash'); void target.offsetWidth; target.classList.add('flash');
+    setTimeout(() => target.classList.remove('flash'), 1200);
+  });
+  document.querySelectorAll('[data-pvtab]').forEach(b => b.addEventListener('click', () => { pvTab = b.getAttribute('data-pvtab'); renderPreview(); }));
+  $('pvFab').addEventListener('click', () => $('preview').scrollIntoView({ behavior: 'smooth', block: 'start' }));
+
+  // --- xem nhanh nội dung file Word (tải thư viện khi cần) ---
+  function loadScriptOnce(src, test){
+    if (test()) return Promise.resolve();
+    return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('load ' + src)); document.head.appendChild(s); });
+  }
+  async function ensureWordPreview(){
+    if (!word) return;
+    const key = word.name + '|' + word.size;
+    if (wordPreview.key === key && wordPreview.state !== 'idle') return;
+    wordPreview.key = key; wordPreview.state = 'loading'; wordPreview.html = '';
+    if (!/\.docx$/i.test(word.name)) { wordPreview.state = 'fail'; schedulePreview(); return; }
+    try {
+      await Promise.all([
+        loadScriptOnce('https://cdn.jsdelivr.net/npm/mammoth/mammoth.browser.min.js', () => window.mammoth),
+        loadScriptOnce('https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js', () => window.DOMPurify)
+      ]);
+      const buf = await word.file.arrayBuffer();
+      const r = await window.mammoth.convertToHtml({ arrayBuffer: buf });
+      if (wordPreview.key !== key) return;
+      wordPreview.html = window.DOMPurify.sanitize(r.value || '');
+      wordPreview.state = wordPreview.html.trim() ? 'ok' : 'fail';
+    } catch (e) { if (wordPreview.key === key) wordPreview.state = 'fail'; }
+    schedulePreview();
+  }
+
+  // --- nối vào các thay đổi của form ---
+  form.addEventListener('input', schedulePreview);
+  form.addEventListener('change', schedulePreview);
+  const _renderPdfList = renderPdfList; renderPdfList = function(){ _renderPdfList.apply(this, arguments); schedulePreview(); };
+  const _clearImage = clearImage; clearImage = function(){ _clearImage.apply(this, arguments); schedulePreview(); };
+  const _setImage = setImage; setImage = async function(){ await _setImage.apply(this, arguments); schedulePreview(); };
+  const _setWord = setWord; setWord = function(){ _setWord.apply(this, arguments); wordPreview.state = 'idle'; schedulePreview(); };
+  const _clearWord = clearWord; clearWord = function(){ _clearWord.apply(this, arguments); wordPreview.state = 'idle'; wordPreview.key = ''; schedulePreview(); };
+  const _updateCounter = updateCounter; updateCounter = function(){ _updateCounter.apply(this, arguments); schedulePreview(); };
+  // --- kéo thanh giữa để đổi độ rộng khung xem trước + nút phóng to/thu nhỏ ---
+  (function(){
+    const layout = document.querySelector('.layout'), sp = $('splitter');
+    const MIN_FORM = 420, MIN_PV = 320, KEY = 'dangbai_layout_v1';
+    let formW = 680, zoom = 1;
+    try { const o = JSON.parse(localStorage.getItem(KEY) || '{}'); if (o.formW) formW = o.formW; if (o.zoom) zoom = o.zoom; } catch (e) {}
+    function clampW(w){
+      const total = layout.getBoundingClientRect().width - 14;
+      return Math.max(MIN_FORM, Math.min(w, total - MIN_PV));
+    }
+    function apply(save){
+      formW = clampW(formW);
+      layout.style.setProperty('--formw', formW + 'px');
+      layout.style.setProperty('--pvz', zoom);
+      $('zVal').textContent = Math.round(zoom * 100) + '%';
+      sp.setAttribute('aria-valuenow', Math.round(formW));
+      if (save) { try { localStorage.setItem(KEY, JSON.stringify({ formW, zoom })); } catch (e) {} }
+    }
+    sp.addEventListener('pointerdown', (e) => {
+      e.preventDefault(); sp.setPointerCapture(e.pointerId);
+      sp.classList.add('drag'); document.body.classList.add('resizing');
+      const left = layout.getBoundingClientRect().left;
+      const move = (ev) => { formW = ev.clientX - left - 7; apply(false); };
+      const up = () => {
+        sp.classList.remove('drag'); document.body.classList.remove('resizing');
+        sp.removeEventListener('pointermove', move); sp.removeEventListener('pointerup', up); sp.removeEventListener('pointercancel', up);
+        apply(true);
+      };
+      sp.addEventListener('pointermove', move); sp.addEventListener('pointerup', up); sp.addEventListener('pointercancel', up);
+    });
+    sp.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { formW -= 24; apply(true); e.preventDefault(); }
+      if (e.key === 'ArrowRight') { formW += 24; apply(true); e.preventDefault(); }
+    });
+    sp.addEventListener('dblclick', () => { formW = 680; zoom = 1; apply(true); });
+    const setZoom = (z) => { zoom = Math.max(0.6, Math.min(1.6, Math.round(z * 100) / 100)); apply(true); };
+    $('zIn').addEventListener('click', () => setZoom(zoom + 0.1));
+    $('zOut').addEventListener('click', () => setZoom(zoom - 0.1));
+    $('zVal').addEventListener('dblclick', () => setZoom(1));
+    window.addEventListener('resize', () => apply(false));
+    apply(false);
+  })();
+
+  renderPreview();
+
+  loadDraft();
+  syncLibUI();
+  updateCounter();
+  renderPdfList();
+  if (!supabaseClient) showMsg('Chưa kết nối được Supabase (thư viện không tải được hoặc chưa cấu hình). Bạn vẫn soạn được bài, nhưng cần có mạng để đăng.', 'warn');
+</script>
+<script>
+(function(){
+  let oldWordFile=null, oldImage=null, editRow=null, editDel={image:false,word:false,pdfs:new Set()};
+  const T=SUPABASE_TABLE;
+  const fmtD=(s)=>{const d=new Date(s);return isNaN(d)?'':String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();};
+
+  async function refreshList(){
+    if(!supabaseClient){showMsg('Không kết nối được Supabase. Tải lại trang rồi thử lại.','err');return;}
+    const {data,error}=await supabaseClient.from(T).select('id,created_at,category,title').order('created_at',{ascending:false}).limit(80);
+    if(error){showMsg('Không tải được danh sách bài: '+error.message,'err');return;}
+    $('editSel').innerHTML=(data||[]).map(p=>'<option value="'+esc(p.id)+'">'+fmtD(p.created_at)+' · '+esc(p.category)+' · '+esc(p.title)+'</option>').join('');
+  }
+  $('editOpen').addEventListener('click',()=>{$('editPick').hidden=false;refreshList();});
+
+  $('editLoad').addEventListener('click',async()=>{
+    const id=$('editSel').value;
+    if(!id)return;
+    if((pdfItems.length||$('title').value.trim()||$('content').value.trim())&&!confirm('Form đang có nội dung chưa đăng. Mở bài để sửa sẽ xóa nội dung đó. Tiếp tục?'))return;
+    const {data,error}=await supabaseClient.from(T).select('*').eq('id',id).single();
+    if(error||!data){showMsg('Không mở được bài: '+((error&&error.message)||''),'err');return;}
+    resetAll();hideMsg();
+    editRow=data;editDel={image:false,word:false,pdfs:new Set()};
+    const set=(k,v)=>{$(k).value=v==null?'':v;};
+    set('category',data.category);set('title',data.title);set('badge',data.badge);set('content',data.content);set('detail',data.detail);set('docUrl',data.doc_url);
+    (data.pdfs||[]).forEach(p=>{if(p&&p.kind==='note'&&$('note_'+p.section))set('note_'+p.section,p.text);});
+    syncLibUI();
+    oldWordFile=null;oldImage=null;
+    if(data.word_url){try{
+      const bl=await (await fetch(data.word_url)).blob();
+      oldWordFile=new File([bl],data.word_name||'bai-viet.docx',{type:data.word_type||bl.type});
+      setWord(oldWordFile);
+    }catch(e){oldWordFile=null;}}
+    if(data.image_url){
+      oldImage={dataUrl:data.image_url,type:data.image_type||'image/jpeg',name:data.image_name||'anh',size:0};
+      image=oldImage;$('imgPreview').src=oldImage.dataUrl;$('imgWrap').style.display='block';
+      $('imgMeta').textContent=oldImage.name+' (ảnh hiện tại)';
+      $('fileDrop').textContent='Ảnh hiện tại: '+oldImage.name+' — chọn ảnh khác để thay';$('fileDrop').classList.add('has-file');
+    }
+    if(data.word_base64){try{
+      const bin=atob(stripDataUrl(data.word_base64)),u=new Uint8Array(bin.length);
+      for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+      oldWordFile=new File([u],data.word_name||'bai-viet.docx',{type:data.word_type||'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+      setWord(oldWordFile);
+    }catch(e){oldWordFile=null;}}
+    if(data.image_base64){
+      const ty=data.image_type||'image/jpeg';
+      oldImage={dataUrl:'data:'+ty+';base64,'+data.image_base64,type:ty,name:data.image_name||'anh',size:Math.round(data.image_base64.length*0.75)};
+      image=oldImage;$('imgPreview').src=oldImage.dataUrl;$('imgWrap').style.display='block';
+      $('imgMeta').textContent=oldImage.name+' (ảnh hiện tại)';
+      $('fileDrop').textContent='Ảnh hiện tại: '+oldImage.name+' — chọn ảnh khác để thay';$('fileDrop').classList.add('has-file');
+    }
+    $('editToText').hidden=!oldWordFile;
+    DRAFT_FIELDS.forEach(k=>$(k).dispatchEvent(new Event('input',{bubbles:true})));
+    $('category').dispatchEvent(new Event('change',{bubbles:true}));
+    $('editPick').hidden=true;$('editState').hidden=false;$('editTitle').textContent=data.title;
+    submitBtn.textContent='Lưu chỉnh sửa';
+    renderFiles();schedulePreview();
+    const tb=document.querySelector('[data-pvtab="article"]');if(tb)tb.click();
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+
+  function renderFiles(){
+    const box=$('editFiles');
+    if(!editRow){box.innerHTML='';return;}
+    const r=editRow,h=[];
+    const item=(label,gone,key,pre)=>'<div class="ed-row'+(gone?' gone':'')+'">'+(pre||'')+'<span>'+label+'</span><button type="button" class="chip-btn" data-k="'+esc(key)+'">'+(gone?'Hoàn tác':'Gỡ')+'</button></div>';
+    (r.pdfs||[]).filter(p=>p&&p.kind!=='note').forEach(p=>h.push(item('PDF: '+esc(p.name||'')+(p.section?' ('+esc(secLabel(p.section))+')':''),editDel.pdfs.has(p.uid),'pdf:'+p.uid)));
+    box.innerHTML=h.join('');
+  }
+  $('editFiles').addEventListener('click',(e)=>{
+    const b=e.target.closest('button[data-k]');if(!b)return;
+    const k=b.dataset.k;
+    if(k==='image')editDel.image=!editDel.image;
+    else if(k==='word')editDel.word=!editDel.word;
+    else{const u=k.slice(4);editDel.pdfs.has(u)?editDel.pdfs.delete(u):editDel.pdfs.add(u);}
+    renderFiles();
+  });
+
+  $('editToText').addEventListener('click',async()=>{
+    const f=word&&word.file;if(!f)return;
+    if(!confirm('Nội dung Word sẽ được chuyển thành chữ thường vào ô gõ tay (mất định dạng, bảng, ảnh trong Word), và file Word cũ sẽ được gỡ khỏi bài khi bạn lưu. Tiếp tục?'))return;
+    try{
+      if(!window.mammoth)await new Promise((res,rej)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/mammoth/mammoth.browser.min.js';sc.onload=res;sc.onerror=()=>rej(new Error('không tải được thư viện đọc Word'));document.head.appendChild(sc);});
+      const r=await window.mammoth.extractRawText({arrayBuffer:await f.arrayBuffer()});
+      $('detail').value=(r.value||'').trim();
+      $('detail').dispatchEvent(new Event('input',{bubbles:true}));
+      $('detailBlock').open=true;clearWord();$('editToText').hidden=true;
+      $('detail').scrollIntoView({behavior:'smooth',block:'center'});
+    }catch(e){showMsg('Không đọc được file Word: '+((e&&e.message)||e),'err');}
+  });
+
+  function exitEdit(){
+    editRow=null;oldWordFile=null;oldImage=null;editDel={image:false,word:false,pdfs:new Set()};
+    $('editState').hidden=true;$('editFiles').innerHTML='';submitBtn.textContent='Đăng bài';
+  }
+  $('editCancel').addEventListener('click',()=>{resetAll();exitEdit();hideMsg();});
+
+  // Chặn submit mặc định (đăng bài mới) khi đang ở chế độ sửa
+  document.addEventListener('submit',(e)=>{
+    if(e.target!==form||!editRow)return;
+    e.preventDefault();e.stopPropagation();saveEdit();
+  },true);
+
+  async function saveEdit(){
+    if(busy)return;hideMsg();
+    if(navigator.onLine===false){showMsg('Bạn đang offline.','err');return;}
+    const title=$('title').value.trim(),content=$('content').value.trim(),docUrl=$('docUrl').value.trim();
+    if(!title||!content){showMsg('Vui lòng điền đầy đủ Tiêu đề và Tóm tắt.','err');return;}
+    if(docUrl&&!/^https?:\/\//i.test(docUrl)){showMsg('Link Google Doc phải bắt đầu bằng http:// hoặc https://','err');return;}
+    cancelRequested=false;setBusy(true);submitBtn.textContent='Đang lưu…';
+    const pending=pdfItems.filter(p=>p.status!=='done');
+    pending.forEach(p=>{p.status='pending';p.err='';});
+    try{
+      const batches=makeBatches(pending,(word&&word.file!==oldWordFile?word.size:0)+(image&&image!==oldImage?image.size:0));
+      const ch={category:$('category').value,title,badge:$('badge').value.trim(),content,doc_url:docUrl,detail:$('detail').value.trim()};
+      const fch={}, oldPaths=[];
+      if(image){if(image!==oldImage){fch.image_url=(await uploadToStorage(await dataUrlToBlob(image.dataUrl),'img',image.name,image.type)).url;fch.image_type=image.type;fch.image_name=image.name;oldPaths.push(pathFromUrl(editRow.image_url));}}
+      else if(oldImage){fch.image_url='';fch.image_type='';fch.image_name='';oldPaths.push(pathFromUrl(editRow.image_url));}
+      if(word){if(word.file!==oldWordFile){fch.word_url=(await uploadToStorage(word.file,'word',word.name,word.type)).url;fch.word_type=word.type;fch.word_name=word.name;oldPaths.push(pathFromUrl(editRow.word_url));}}
+      else if(oldWordFile){fch.word_url='';fch.word_type='';fch.word_name='';oldPaths.push(pathFromUrl(editRow.word_url));}
+      ch.pdfs_remove=Array.from(editDel.pdfs);
+      if(isLib())ch.notes=libNotes().map(n=>({uid:'note:'+n.key,kind:'note',section:n.key,text:n.text}));
+      ch.pdfs_add=[];for(const it of batches[0])ch.pdfs_add.push(await pdfEntry(it));
+      batches[0].forEach(p=>p.status='uploading');renderPdfList();
+      setProgress('Đang lưu chỉnh sửa…',15);
+      const {error}=await supabaseClient.rpc('update_post',{p_id:String(editRow.id),p_changes:ch});
+      if(error)throw error;
+      if(Object.keys(fch).length){const r2=await supabaseClient.rpc('set_post_files',{p_id:String(editRow.id),p_changes:fch});if(r2.error)throw r2.error;}
+      (editRow.pdfs||[]).forEach(p=>{if(p&&p.path&&editDel.pdfs.has(p.uid))oldPaths.push(p.path);});
+      removeStored(oldPaths);
+      batches[0].forEach(p=>p.status='done');
+      for(let b=1;b<batches.length;b++){
+        setProgress('Đang tải thêm PDF — lô '+(b+1)+'/'+batches.length,(b/batches.length)*100);
+        const ents=[];for(const it of batches[b])ents.push(await pdfEntry(it));
+        await withRetry(()=>appendPdfs(editRow.id,ents));
+        batches[b].forEach(p=>p.status='done');
+      }
+      hideProgress();resetAll();exitEdit();
+      showMsg('Đã lưu chỉnh sửa! Tải lại trang chủ (Ctrl+F5) để thấy bản mới.',true);
+    }catch(err){
+      hideProgress();pending.forEach(p=>{if(p.status==='uploading')p.status='pending';});
+      let m=(err&&err.message)||String(err);
+      if(/PGRST202|could not find/i.test(((err&&err.code)||'')+' '+m))m='Chưa cài hàm trong Supabase (update_post / set_post_files). Hãy chạy SQL ở mục Cài đặt Supabase một lần.';
+      showMsg('Không lưu được: '+m,'err');
+    }finally{setBusy(false);if(editRow)submitBtn.textContent='Lưu chỉnh sửa';}
+  }
+})();
+</script>
+</body>
+</html>
